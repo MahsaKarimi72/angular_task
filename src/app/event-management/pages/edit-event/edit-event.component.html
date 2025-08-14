@@ -1,0 +1,4 @@
+<h2>Edit Event</h2>
+<ng-container *ngIf="vm$ | async as vm">
+  <app-event-form [value]="vm" (submitForm)="onSubmit(vm.id, $event)"></app-event-form>
+</ng-container>

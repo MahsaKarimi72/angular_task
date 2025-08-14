@@ -1,0 +1,30 @@
+<div style="display:grid;gap:16px;">
+  <nz-card>
+    <div style="display:flex;gap:16px;flex-wrap:wrap;">
+      <img *ngIf="event.coverImageDataUrl || event.coverImageUrl" [src]="event.coverImageDataUrl || event.coverImageUrl" style="max-width:320px;border-radius:8px;" />
+      <div style="min-width:260px;flex:1">
+        <h2 style="margin:0 0 8px 0">{{ event.title }}</h2>
+        <nz-tag [nzColor]="(event.isPublic ?? true) ? 'green' : 'gold'">
+          {{ (event.isPublic ?? true) ? 'Public' : 'Private' }}
+        </nz-tag>
+        <p>{{ event.description }}</p>
+        <p><strong>When:</strong> {{ event.startDateTime | date:'medium' }} – {{ event.endDateTime | date:'shortTime' }} ({{ event.timezone }})</p>
+        <p><strong>Where:</strong> {{ event.venue?.venueName || '-' }}</p>
+        <div style="display:flex;gap:8px;">
+          <button nz-button nzType="primary" (click)="copyLink()" *ngIf="(event.isPublic ?? true)">Copy Public Link</button>
+          <a nz-button [routerLink]="['/events/edit', event.id]">Edit</a>
+        </div>
+      </div>
+    </div>
+  </nz-card>
+
+  <nz-card *ngIf="event.primaryImageDataUrl || event.primaryImageUrl" nzTitle="Primary Image">
+     <img
+      nz-image
+      width="200px"
+      height="200px"
+      nzSrc="event.primaryImageDataUrl || event.primaryImageUrl"
+      alt=""
+    />
+  </nz-card>
+</div>

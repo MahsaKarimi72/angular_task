@@ -1,0 +1,10 @@
+@media (max-width: 600px) {
+    .filter-bar {
+        flex-direction: column;
+    }
+}
+
+.action-button {
+    margin: 4px;
+    min-width: 90px;
+}

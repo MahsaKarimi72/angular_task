@@ -1,0 +1,67 @@
+<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;">
+  <!-- Search -->
+  <nz-input-group nzPrefixIcon="search" style="flex:1 1 200px;">
+    <input nz-input placeholder="Search by title" [(ngModel)]="q" (ngModelChange)="applyFilters()" />
+  </nz-input-group>
+
+  <!-- Visibility filter -->
+  <nz-select style="flex:1 1 160px;min-width:120px;" [(ngModel)]="visibility" (ngModelChange)="applyFilters()">
+    <nz-option nzLabel="All" nzValue="all"></nz-option>
+    <nz-option nzLabel="Public" nzValue="public"></nz-option>
+    <nz-option nzLabel="Private" nzValue="private"></nz-option>
+  </nz-select>
+
+  <!-- Sort -->
+  <nz-select style="flex:1 1 160px;min-width:120px;" [(ngModel)]="sort" (ngModelChange)="applyFilters()">
+    <nz-option nzLabel="Sort: Newest" nzValue="desc"></nz-option>
+    <nz-option nzLabel="Sort: Oldest" nzValue="asc"></nz-option>
+  </nz-select>
+</div>
+
+<!-- Count tags -->
+<div *ngIf="counts$ | async as c" style="display:flex;flex-wrap:wrap;gap:12px;margin:8px 0;">
+  <nz-tag>Total: {{ c.total }}</nz-tag>
+  <nz-tag nzColor="green">Public: {{ c.public }}</nz-tag>
+  <nz-tag nzColor="gold">Private: {{ c.private }}</nz-tag>
+</div>
+
+<nz-spin [nzSpinning]="loading">
+  <div style="overflow-x:auto;">
+    <nz-table #basicTable *ngIf="(data$ | async) as data" [nzData]="data" [nzFrontPagination]="true" [nzPageSize]="5"
+      [nzShowPagination]="true" [nzLoading]="loading" nzBordered>
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Venue</th>
+          <th>Visibility</th>
+          <th width="160"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let e of basicTable.data">
+          <td>
+            <a>{{ e.title }}</a>
+            <br />
+            <small>{{ e.description }}</small>
+          </td>
+          <td>{{ e.startDateTime | date:'medium' }} ({{ e.timezone }})</td>
+          <td>{{ e.endDateTime | date:'medium' }} ({{ e.timezone }})</td>
+          <td>{{ e.venue?.venueName || '-' }}</td>
+          <td>
+            <nz-tag [nzColor]="(e.isPublic ?? true) ? 'green' : 'gold'">
+              {{ (e.isPublic ?? true) ? 'Public' : 'Private' }}
+            </nz-tag>
+          </td>
+          <td>
+            <button nz-button nz-size="small" class="action-button" (click)="openEdit(e.id)">Edit</button>
+            <button nz-button nzDanger nz-size="small" class="action-button" (click)="confirmDelete(e)">Delete</button>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </div>
+
+  <nz-empty *ngIf="(data$ | async)?.length === 0 && !loading" nzNotFoundContent="No events found"></nz-empty>
+</nz-spin>
